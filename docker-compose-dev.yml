@@ -1,0 +1,47 @@
+version: '3'
+services:
+  mongo1:
+    image: mongo
+    hostname: mongo1
+    container_name: mongo1
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./config/.mongoReplSet/keyfile:/data/keyfile
+      - ./data/master:/data/db
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    command: mongod --auth --keyFile /data/keyfile/mongoReplSet-keyfile --bind_ip_all --replSet rs0
+
+  mongo2:
+    image: mongo
+    hostname: mongo2
+    container_name: mongo2
+    restart: always
+    ports:
+      - 27018:27017
+    volumes:
+      - ./config/.mongoReplSet/keyfile:/data/keyfile
+      - ./data/secondary:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    command: mongod --auth --keyFile /data/keyfile/mongoReplSet-keyfile --bind_ip_all --replSet rs0
+
+  mongo3:
+    image: mongo
+    hostname: mongo3
+    container_name: mongo3
+    restart: always
+    ports:
+      - 27019:27017
+    volumes:
+      - ./config/.mongoReplSet/keyfile:/data/keyfile
+      - ./data/arbiter:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    command: mongod --auth --keyFile /data/keyfile/mongoReplSet-keyfile --bind_ip_all --replSet rs0
